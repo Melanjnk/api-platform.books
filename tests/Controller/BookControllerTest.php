@@ -5,6 +5,7 @@ namespace App\Controller\Tests;
 
 
 use App\Tests\DatabasePrimer;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Entity\Book;
@@ -34,7 +35,8 @@ class BookControllerTest extends KernelTestCase
     {
         $book = new Book();
         $book->setAuthor('Brandon Sanderson');
-        $book->setTitle('Mistborn');;
+        $book->setTitle('Mistborn');
+        $book->setPublicationDate(new DateTime('2006-06-17'));
         $this->entityManager->persist($book);
 
         $this->entityManager->flush();
