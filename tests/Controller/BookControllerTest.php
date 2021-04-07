@@ -4,6 +4,7 @@
 namespace App\Controller\Tests;
 
 
+use App\Tests\DatabasePrimer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Entity\Book;
