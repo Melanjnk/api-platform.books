@@ -60,10 +60,10 @@ class RefreshBookProfileCommand extends Command
         }
 
         if ($bookProfile['statusCode'] !== Response::HTTP_OK) {
-
+            $book = json_decode($bookProfile['content'], true);
         }
 
-        $book = $this->serializer->deserialize();
+//        $book = $this->serializer->deserialize($bookProfile['content'], Book::class, 'json');
         /*        $book = new Book();
                 $book->setAuthor($author);
                 $book->setTitle($title);

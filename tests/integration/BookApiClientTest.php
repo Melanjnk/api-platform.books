@@ -17,6 +17,6 @@ class BookApiClientTest extends DbTestCase
         $bookProfile = json_decode($response['content']);
         $this->assertSame('', $bookProfile->title);
         $this->assertSame('', $bookProfile->author);
-        $this->assertSame('', $bookProfile->publicationDate);
+        $this->assertSame('', $bookProfile->pub_date);
     }
 }

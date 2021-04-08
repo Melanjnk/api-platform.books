@@ -11,8 +11,10 @@ docker-composer exec app composer install
 docker-composer exec app php bin/console c:c
 ```
 #### Run Tests
-```phpunit 
+```docker 
 docker-composer exec app php bin/phpunit
+# Example How run only one test
+docker-composer exec app php bin/phpunit tests/integration/BookApiClientTest.php
 ```
 
 #### Create Test Db
