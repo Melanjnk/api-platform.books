@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Book;
+use App\Http\BookApiClient;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -10,6 +11,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class RefreshBookProfileCommand extends Command
 {
@@ -17,7 +21,7 @@ class RefreshBookProfileCommand extends Command
     protected static $defaultName = 'app:refresh-book-profile';
     protected static $defaultDescription = 'Update book author and title from some Api';
 
-    public function __construct(protected EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager, private BookApiClient $bookApiClient, private SerializerInterface $serializer)
     {
         parent::__construct();
     }
@@ -28,8 +32,7 @@ class RefreshBookProfileCommand extends Command
             ->setDescription(self::$defaultDescription)
             ->addArgument('author', InputArgument::REQUIRED, 'Book author')
             ->addArgument('title', InputArgument::REQUIRED, 'Book title')
-            ->addArgument('pub_date', InputArgument::REQUIRED, 'Book publication date')
-        ;
+            ->addArgument('pub_date', InputArgument::REQUIRED, 'Book publication date');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -51,10 +54,20 @@ class RefreshBookProfileCommand extends Command
             $io->note(sprintf('You passed an argument: %s', $pubDate));
         }
 
-        $book = new Book();
-        $book->setAuthor($author);
-        $book->setTitle($title);
-        $book->setPublicationDate(new DateTime($pubDate));
+        if ((gettype($author) === 'string' || gettype($author) === 'array')
+            && gettype($title) === 'string') {
+            $bookProfile = $this->bookApiClient->fetchBookProfile($author, $title, $pubDate);
+        }
+
+        if ($bookProfile['statusCode'] !== Response::HTTP_OK) {
+
+        }
+
+        $book = $this->serializer->deserialize();
+        /*        $book = new Book();
+                $book->setAuthor($author);
+                $book->setTitle($title);
+                $book->setPublicationDate(new DateTime($pubDate));*/
 
         $this->entityManager->persist($book);
 
