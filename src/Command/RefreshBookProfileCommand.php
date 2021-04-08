@@ -2,41 +2,67 @@
 
 namespace App\Command;
 
+use App\Entity\Book;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RefreshBookProfileCommand extends Command
 {
+
     protected static $defaultName = 'app:refresh-book-profile';
-    protected static $defaultDescription = 'Add a short description for your command';
+    protected static $defaultDescription = 'Update book author and title from some Api';
+
+    public function __construct(protected EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+    }
 
     protected function configure()
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
+            ->addArgument('author', InputArgument::REQUIRED, 'Book author')
+            ->addArgument('title', InputArgument::REQUIRED, 'Book title')
+            ->addArgument('pub_date', InputArgument::REQUIRED, 'Book publication date')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
+        $author = $input->getArgument('author');
+        $title = $input->getArgument('title');
+        $pubDate = $input->getArgument('pub_date');
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        if ($author) {
+            $io->note(sprintf('You passed an argument: %s', $author));
         }
 
-        if ($input->getOption('option1')) {
-            // ...
+        if ($title) {
+            $io->note(sprintf('You passed an argument: %s', $title));
         }
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        if ($pubDate) {
+            $io->note(sprintf('You passed an argument: %s', $pubDate));
+        }
+
+        $book = new Book();
+        $book->setAuthor($author);
+        $book->setTitle($title);
+        $book->setPublicationDate(new DateTime($pubDate));
+
+        $this->entityManager->persist($book);
+
+        $this->entityManager->flush();
+
+
+        $io->success('Book refresh-book-profile Command executed');
+        //You have a new command! Now make it your own! Pass --help to see your options.
 
         return Command::SUCCESS;
     }
