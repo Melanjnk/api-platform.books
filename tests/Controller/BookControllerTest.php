@@ -4,32 +4,12 @@
 namespace App\Controller\Tests;
 
 
-use App\Tests\DatabasePrimer;
+use App\Tests\DbTestCase;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Entity\Book;
 
-class BookControllerTest extends KernelTestCase
+class BookControllerTest extends DbTestCase
 {
-    protected ?EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        $kernel = self::bootKernel();
-
-        DatabasePrimer::prime($kernel);
-
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $this->entityManager->close();
-        $this->entityManager = null;
-    }
-
     /** @test */
     public function canBookBeCreated()
     {

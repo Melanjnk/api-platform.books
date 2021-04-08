@@ -19,3 +19,7 @@ docker-composer exec app php bin/phpunit
 ```phpunit 
 docker-composer exec app php bin/console doctrine:database:create
 ```
+
+```php-cli
+php bin/console make:command
+```
